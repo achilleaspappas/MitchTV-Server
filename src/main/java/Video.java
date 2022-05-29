@@ -1,5 +1,6 @@
 public class Video {
 
+    /* The video object contains the full name of the file, the name of the video, the resolution and the format. */
     private String fullName;
     private String name;
     private Integer resolution;
