@@ -286,13 +286,10 @@ public class DataAdmin {
                     commandLineArgs.add("-re");
                     commandLineArgs.add("-i");
                     commandLineArgs.add(dir + selectedVideo);
-                    commandLineArgs.add("-an");
-                    commandLineArgs.add("-c:v");
+                    commandLineArgs.add("-vcodec");
                     commandLineArgs.add("copy");
                     commandLineArgs.add("-f");
-                    commandLineArgs.add("rtp");
-                    commandLineArgs.add("-sdp_file");
-                    commandLineArgs.add(System.getProperty("user.dir") + "/video.sdp");
+                    commandLineArgs.add("rtp_mpegts");
                     commandLineArgs.add("rtp://127.0.0.1:5004");
                 }
 
@@ -310,7 +307,7 @@ public class DataAdmin {
             log.debug("Server: Connection closed.");
 
             /* Program termination. */
-            log.debug("Client: Program terminated.");
+            log.debug("Server: Program terminated.");
             System.exit(0);
 
         }
