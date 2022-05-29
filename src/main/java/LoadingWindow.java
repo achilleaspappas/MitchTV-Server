@@ -36,7 +36,7 @@ public class LoadingWindow extends JFrame {
         /* Terminates the loading window */
         this.setVisible(false);
         dispose();
-        log.debug("Client: Loading window stopped.");
+        log.debug("Server: Loading window stopped.");
     }
 
     class initGUI {
@@ -48,7 +48,7 @@ public class LoadingWindow extends JFrame {
             /* Initialization of the GUI. */
             panelsSetup();
             organizingPanels();
-            log.debug("Client: Loading window started.");
+            log.debug("Server: Loading window started.");
         }
 
         private void panelsSetup() {

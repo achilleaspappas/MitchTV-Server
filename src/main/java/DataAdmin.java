@@ -21,7 +21,6 @@ public class DataAdmin {
     private ArrayList<Integer> usedNamesIndex;
     private ArrayList<Integer> prototypeResolutionList;
     private ArrayList<String> prototypeFormatList;
-    private boolean terminationState;
     private SocketServer ss;
 
     DataAdmin() {
@@ -31,9 +30,6 @@ public class DataAdmin {
 
         /* Loading window start up. */
         LoadingWindow lw = new LoadingWindow();
-
-        /* Termination state of loading window is false. */
-        terminationState = true;
 
         /* Setting up all lists, videoList contains video objects, usedNames and usedNamesIndex are used to fins optimal values.
         * prototype lists contain information about all resolutions and formats. */
@@ -74,7 +70,7 @@ public class DataAdmin {
         prototypeResolutionList.add(480);
         prototypeResolutionList.add(720);
         prototypeResolutionList.add(1080);
-        log.debug("Prototype list containing resolutions has been created.");
+        log.debug("Server: Prototype list containing resolutions has been created.");
     }
 
     private void createPrototypeFormatList() {
@@ -83,7 +79,7 @@ public class DataAdmin {
         prototypeFormatList.add("mkv");
         prototypeFormatList.add("mp4");
         prototypeFormatList.add("avi");
-        log.debug("Prototype list containing formats has been created.");
+        log.debug("Server: Prototype list containing formats has been created.");
     }
 
     private void collectFiles() {
@@ -95,14 +91,14 @@ public class DataAdmin {
 
         File f = new File(System.getProperty("user.dir") + "/videos/");
         String[] fileNames = f.list();
-        log.debug("List of available files in folder \"videos\" has been obtained.");
+        log.debug("Server: List of available files in folder \"videos\" has been obtained.");
 
         for (String fileName : fileNames) {
             tempName = String.valueOf(fileName.split("-")[0]);
             tempResolution = Integer.parseInt(fileName.split("-")[1].split("p.")[0]);
             tempFormat = String.valueOf(fileName.split("[.]")[1]);
             videoList.add(new Video(fileName, tempName, tempResolution, tempFormat));
-            log.debug(fileName + " added from folder \"videos\" to videoList.");
+            log.debug("Server: " + fileName + " added from folder \"videos\" to videoList.");
         }
     }
 
@@ -143,7 +139,7 @@ public class DataAdmin {
                     usedNames.add(temp1);
                     usedNamesIndex.add(temp2);
                     state = false;
-                    log.debug("Biggest resolution found for video " + temp1 + ".");
+                    log.debug("Server: Biggest resolution found for video " + temp1 + ".");
                 }
                 maxRes = 0;
             }
@@ -171,17 +167,16 @@ public class DataAdmin {
                         continue;
                     }
                     if (!tempFullNameList.contains(name + "-" + resolution + "p." + format)) {
-                        log.debug("Missing video found " + name + "-" + resolution + "p." + format + ".");
+                        log.debug("Server: Missing video found " + name + "-" + resolution + "p." + format + ".");
                         createVideo(videoList.get(usedNamesIndex.get(counter)), name + "-" + resolution + "p." + format);
                         tempVideo.add(new Video(name + "-" + resolution + "p." + format, name, resolution, format));
-                        log.debug("Missing video created " + name + "-" + resolution + "p." + format + ".");
+                        log.debug("Server: Missing video created " + name + "-" + resolution + "p." + format + ".");
                     }
                 }
             }
             counter++;
         }
         videoList.addAll(tempVideo);
-        terminationState = false;
     }
 
     private void createVideo(Video inputObj, String outputName) {
@@ -192,27 +187,26 @@ public class DataAdmin {
         FFprobe ffprobe = null;
         String inputName = inputObj.getFullName();
         try {
-            log.debug("Initializing FFMpegClient.");
-            log.warn("This may produce an IOException.");
+            log.debug("Server: Initializing FFMpegClient.");
             ffmpeg = new FFmpeg("C:\\ffmpeg\\bin\\ffmpeg.exe");
             ffprobe = new FFprobe("C:\\ffmpeg\\bin\\ffprobe.exe");
         } catch (IOException e) {
-            log.fatal("Error an IOException happened, program crashed.");
+            log.fatal("Server: Error an exception happened.");
             e.printStackTrace();
         }
 
-        log.debug("Creating the transcoding.");
+        log.debug("Server: Creating the transcoding.");
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(dir + inputName)
                 .addOutput(dir + outputName)
                 .done();
 
-        log.debug("Creating the executor.");
+        log.debug("Server: Creating the executor.");
         FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
 
-        log.debug("Starting the transcoding.");
+        log.debug("Server: Starting the transcoding.");
         executor.createJob(builder).run();
-        log.debug("Transcoding finished for video " + outputName + ".");
+        log.debug("Server: Transcoding finished for video " + outputName + ".");
     }
 
     class SocketServer {
@@ -228,10 +222,10 @@ public class DataAdmin {
 
         SocketServer() {
             try {
-                log.debug("Initializing ServerSocket.");
+                log.debug("Server: Initializing ServerSocket.");
                 server = new ServerSocket(5000);
             } catch (IOException e) {
-                log.fatal("Error an exception happened.");
+                log.fatal("Server: Error an exception happened.");
                 e.printStackTrace();
             }
         }
@@ -239,7 +233,7 @@ public class DataAdmin {
         private void dataExchange() {
 
             try {
-                log.debug("Initialising Socket.");
+                log.debug("Server: Initialising Socket.");
                 socket = server.accept();
                 inputStream = new ObjectInputStream(socket.getInputStream());
                 outputStream = new ObjectOutputStream(socket.getOutputStream());
